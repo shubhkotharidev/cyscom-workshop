@@ -13,7 +13,6 @@
 
 <style>
   :root {
-    /* Authentic terminal color palette (based on classic high-contrast themes) */
     --bg:          #0c0c0c;
     --bg-panel:    #111111;
     --bg-input:    #000000;
@@ -42,7 +41,7 @@
     font-family: var(--mono);
     font-size: 14px;
     line-height: 1.5;
-    -webkit-font-smoothing: none; /* Crisper text rendering for mono */
+    -webkit-font-smoothing: none;
   }
 
   ::selection { background: var(--green); color: #000; }
@@ -55,7 +54,6 @@
     outline-offset: 2px;
   }
 
-  /* ---------- Layout ---------- */
   .wrap {
     max-width: 800px;
     margin: 0 auto;
@@ -72,7 +70,6 @@
     font-size: 12px;
   }
 
-  /* ---------- Terminal Elements ---------- */
   .window {
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -112,7 +109,6 @@
     vertical-align: -2px;
   }
 
-  /* ---------- Typography & Content ---------- */
   h1.title {
     font-size: 20px;
     font-weight: 600;
@@ -127,7 +123,6 @@
     max-width: 65ch;
   }
 
-  /* Data Table Grid */
   .meta-table {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -153,7 +148,6 @@
     color: #fff;
   }
 
-  /* Lists */
   .flags {
     padding: 0;
     margin: 0;
@@ -178,7 +172,6 @@
   .tag.root { color: var(--red); }
   .tag.tool { color: var(--yellow); }
 
-  /* ---------- Form & Auth ---------- */
   .gate-msg {
     color: var(--text-dim);
     margin-bottom: 20px;
@@ -205,10 +198,10 @@
     border: 1px dashed var(--border-hl);
     margin-bottom: 25px;
     font-size: 13px;
-    flex-wrap: wrap; /* Allows wrapping on tiny screens */
+    flex-wrap: wrap; 
   }
   .identity img { width: 24px; height: 24px; filter: grayscale(100%); flex-shrink: 0; }
-  .identity #idEmail { word-break: break-all; } /* Break long emails on mobile */
+  .identity #idEmail { word-break: break-all; } 
   .identity .ok { margin-left: auto; color: var(--green); }
 
   .field { margin-bottom: 20px; }
@@ -224,8 +217,8 @@
     border: 1px solid var(--border-hl);
     color: #fff;
     font-family: var(--mono);
-    font-size: 16px; /* 16px prevents iOS from auto-zooming into inputs */
-    padding: 12px;  /* Larger touch target for thumbs */
+    font-size: 16px; 
+    padding: 12px;  
     border-radius: 0;
     appearance: none;
   }
@@ -248,14 +241,13 @@
     font-family: var(--mono);
     font-weight: 600;
     font-size: 14px;
-    padding: 16px; /* Larger tap target */
+    padding: 16px; 
     cursor: pointer;
     text-transform: uppercase;
   }
   button.submit:hover { background: #fff; }
   button.submit:disabled { background: var(--border-hl); color: var(--text-dim); cursor: not-allowed; }
 
-  /* Success Output */
   .success { display: none; }
   .success.show { display: block; }
   .success-box {
@@ -265,7 +257,7 @@
   }
   .success-box .term-line { margin-bottom: 8px; }
 
-  #authStage.hide, #formStage.hide, #successStage.hide { display: none; }
+  #authStage.hide, #formStage.hide, #successStage.hide, #soldOutStage.hide { display: none; }
 
   footer {
     margin-top: 60px;
@@ -277,9 +269,6 @@
     color: var(--text-dark);
   }
 
-  /* =========================================
-     MOBILE RESPONSIVENESS OVERRIDES 
-  ========================================= */
   @media (max-width: 600px) {
     .wrap {
       padding: 20px 16px 60px;
@@ -295,7 +284,6 @@
       padding: 16px;
     }
 
-    /* Convert Grid Table to a Stacked List for Mobile */
     .meta-table {
       grid-template-columns: 1fr;
     }
@@ -316,7 +304,6 @@
       padding-bottom: 12px;
     }
 
-    /* Stack Agenda Lists */
     .flags li {
       flex-direction: column;
       align-items: flex-start;
@@ -326,7 +313,6 @@
       width: auto;
     }
 
-    /* Stack Footer items */
     footer {
       flex-direction: column;
       align-items: center;
@@ -404,6 +390,15 @@
     </div>
     
     <div class="win-body">
+
+      <!-- STAGE 0: SOLD OUT -->
+      <div id="soldOutStage" class="hide">
+        <p class="gate-msg" style="color: var(--red);">
+          [ERR: CAPACITY_REACHED]<br><br>
+          All 90 seats have been filled. Registration is currently closed.
+        </p>
+      </div>
+
       <!-- STAGE 1: AUTH -->
       <div id="authStage">
         <p class="gate-msg">
@@ -473,11 +468,10 @@
    CONFIG
 ========================================================= */
 const GOOGLE_CLIENT_ID = "75488771410-5u9ujnqk022ae6q5ubg9q7gebf4kn8st.apps.googleusercontent.com";
-const SHEET_ENDPOINT   = "https://script.google.com/macros/s/AKfycbzgdT-8HGL6Y7DRZZShwvUFLSEaa7TH2vqP3ZLof15WwW5xLSJ0KJAnNdtdL6fBLN6cbA/exec";
+const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbzgdT-8HGL6Y7DRZZShwvUFLSEaa7TH2vqP3ZLof15WwW5xLSJ0KJAnNdtdL6fBLN6cbA/exec";
 const ALLOWED_DOMAIN   = "vitstudent.ac.in";
 /* ========================================================= */
 
-// Fast, static boot sequence - no slow typewriter
 const bootData = [
   '<span class="prompt">@cyscom:~$</span> ./scan-events.sh',
   'Initializing...',
@@ -488,14 +482,12 @@ const bootData = [
 ];
 document.getElementById('bootBody').innerHTML = bootData.map(line => `<div class="term-line">${line}</div>`).join('');
 
-// Live clock
 function tick(){
   const d = new Date();
   document.getElementById('clock').textContent = d.toLocaleTimeString([], {hour12: false}) + ' IST';
 }
 tick(); setInterval(tick, 1000);
 
-/* ---------------- Google Sign-In ---------------- */
 function parseJwt(token){
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -528,14 +520,31 @@ function handleCredential(response){
   document.getElementById('stageLabel').textContent = '[ STEP 2/2 ]';
 }
 
-window.onload = () => {
+window.onload = async () => {
+  // 1. Check capacity on load
+  try {
+    if(SHEET_ENDPOINT.indexOf('YOUR_') !== 0) {
+      const response = await fetch(SHEET_ENDPOINT);
+      const data = await response.json();
+      
+      if (data.capacityReached) {
+        document.getElementById('authStage').classList.add('hide');
+        document.getElementById('soldOutStage').classList.remove('hide');
+        document.getElementById('stageLabel').textContent = '[ CLOSED ]';
+        return; 
+      }
+    }
+  } catch (err) {
+    console.warn("Could not check capacity:", err);
+  }
+
+  // 2. Load Google Sign-In if seats are available
   if(window.google && GOOGLE_CLIENT_ID.indexOf('YOUR_') !== 0){
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: handleCredential,
       hd: ALLOWED_DOMAIN
     });
-    // Google Button automatically scales slightly to fit containers, but width 320 limits it on tiny 320px screens. Setting to 100% behavior via nullifying fixed width.
     google.accounts.id.renderButton(
       document.getElementById('gbtn-slot'),
       { theme: 'filled_black', size: 'large', shape: 'rectangular', text: 'signin_with' }
@@ -546,7 +555,6 @@ window.onload = () => {
   }
 };
 
-/* ---------------- Form Logic ---------------- */
 const regForm = document.getElementById('regForm');
 const errReg = document.getElementById('errReg');
 const errPhone = document.getElementById('errPhone');
