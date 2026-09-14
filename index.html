@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CySCom | workshop.sh</title>
+<meta name="description" content="CySCom, VIT Chennai — Intro to Cybersecurity Workshop. Wed 16 Sep 2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+  :root {
+    /* Authentic terminal color palette (based on classic high-contrast themes) */
+    --bg:          #0c0c0c;
+    --bg-panel:    #111111;
+    --bg-input:    #000000;
+    --border:      #333333;
+    --border-hl:   #555555;
+    
+    --text:        #cccccc;
+    --text-dim:    #777777;
+    --text-dark:   #444444;
+    
+    --green:       #00ff66;
+    --green-dim:   #008833;
+    --red:         #ff3333;
+    --yellow:      #ffcc00;
+    --blue:        #3399ff;
+
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: none; /* Crisper text rendering for mono */
+  }
+
+  ::selection { background: var(--green); color: #000; }
+
+  a { color: var(--blue); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--blue); }
+  
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 1px solid var(--green);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-hl);
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+
+  /* ---------- Terminal Elements ---------- */
+  .window {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  
+  .win-bar {
+    display: flex;
+    justify-content: space-between;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  
+  .win-controls { color: var(--text-dark); letter-spacing: 2px; }
+  .win-controls span:hover { color: var(--text); cursor: pointer; }
+
+  .win-body {
+    padding: 20px;
+    font-size: 13.5px;
+  }
+
+  .term-line { margin-bottom: 4px; white-space: pre-wrap; word-break: break-word; }
+  .prompt { color: var(--green); font-weight: 600; margin-right: 8px; }
+  .path { color: var(--blue); }
+  .hl { color: var(--yellow); }
+  .ok { color: var(--green); }
+  .err-text { color: var(--red); }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: var(--green);
+    vertical-align: -2px;
+    animation: blink 1s steps(2, start) infinite;
+  }
+  @keyframes blink { to { visibility: hidden; } }
+
+  /* ---------- Typography & Content ---------- */
+  h1.title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 10px 0;
+  }
+  h1.title::before { content: "> "; color: var(--green); }
+
+  .sub {
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    max-width: 65ch;
+  }
+
+  /* Data Table */
+  .meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    font-size: 13px;
+  }
+  .meta-table th, .meta-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .meta-table th {
+    background: var(--bg);
+    color: var(--text-dim);
+    font-weight: normal;
+    width: 25%;
+  }
+  .meta-table td { color: #fff; }
+
+  /* Lists */
+  .flags {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border: 1px solid var(--border);
+  }
+  .flags li {
+    display: flex;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  .flags li:last-child { border-bottom: none; }
+  .flags .tag {
+    width: 90px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-dark);
+  }
+  .flags .tag::before { content: "["; margin-right: 4px; }
+  .flags .tag::after { content: "]"; margin-left: 4px; }
+  .tag.recon { color: var(--blue); }
+  .tag.root { color: var(--red); }
+  .tag.tool { color: var(--yellow); }
+
+  /* ---------- Form & Auth ---------- */
+  .gate-msg {
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .gate-msg code { color: #fff; word-break: break-all; }
+
+  #gbtn-slot { min-height: 44px; margin-bottom: 10px; }
+
+  .denied {
+    display: none;
+    color: var(--bg);
+    background: var(--red);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .denied.show { display: block; }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px dashed var(--border-hl);
+    margin-bottom: 25px;
+    font-size: 13px;
+    flex-wrap: wrap; /* Allows wrapping on tiny screens */
+  }
+  .identity img { width: 24px; height: 24px; filter: grayscale(100%); flex-shrink: 0; }
+  .identity #idEmail { word-break: break-all; } /* Break long emails on mobile */
+  .identity .ok { margin-left: auto; color: var(--green); }
+
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-hl);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 16px; /* 16px prevents iOS from auto-zooming into inputs */
+    padding: 12px;  /* Larger touch target for thumbs */
+    border-radius: 0;
+    appearance: none;
+  }
+  .field input:focus { border-color: var(--green); }
+  .field input::placeholder { color: var(--text-dark); }
+  
+  .field .err {
+    display: none;
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .field .err.show { display: block; }
+
+  /* Command Preview */
+  .cmd-preview {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    word-break: break-all;
+  }
+  .cmd-preview .pv { color: #fff; }
+
+  button.submit {
+    width: 100%;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px; /* Larger tap target */
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  button.submit:hover { background: #fff; }
+  button.submit:disabled { background: var(--border-hl); color: var(--text-dim); cursor: not-allowed; }
+
+  /* Success Output */
+  .success { display: none; }
+  .success.show { display: block; }
+  .success-box {
+    border: 1px dashed var(--green);
+    padding: 20px;
+    background: rgba(0, 255, 102, 0.05);
+  }
+  .success-box .term-line { margin-bottom: 8px; }
+
+  #authStage.hide, #formStage.hide, #successStage.hide { display: none; }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-dark);
+  }
+
+  /* =========================================
+     MOBILE RESPONSIVENESS OVERRIDES 
+  ========================================= */
+  @media (max-width: 600px) {
+    .wrap {
+      padding: 20px 16px 60px;
+    }
+
+    header.top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .win-body {
+      padding: 16px;
+    }
+
+    /* Convert Table to a Stacked List for Mobile */
+    .meta-table, .meta-table tbody, .meta-table tr, .meta-table th, .meta-table td {
+      display: block;
+      width: 100%;
+    }
+    .meta-table tr {
+      margin-bottom: -1px; /* collapse borders */
+    }
+    .meta-table th {
+      border-bottom: none;
+      padding-bottom: 4px;
+      padding-top: 12px;
+    }
+    .meta-table td {
+      border-top: none;
+      padding-top: 0px;
+      padding-bottom: 12px;
+    }
+
+    /* Stack Agenda Lists */
+    .flags li {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .flags .tag {
+      width: auto;
+    }
+
+    /* Stack Footer items */
+    footer {
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .identity .ok {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <span>cyscom.vit.ac.in</span>
+    <span id="clock">00:00:00</span>
+  </header>
+
+  <div class="window">
+    <div class="win-bar">
+      <span>tty1 — bash — 80x24</span>
+      <span class="win-controls"><span>[-]</span> <span>[+]</span> <span>[x]</span></span>
+    </div>
+    <div class="win-body" id="bootBody">
+      <!-- Boot sequence inserted via JS instantly -->
+    </div>
+  </div>
+
+  <h1 class="title">Intro to Cybersecurity_</h1>
+  <p class="sub">
+    A hands-on session by CySCom for anyone curious about security but new to it. No prior experience assumed. We provide the labs, you bring the machine.
+  </p>
+
+  <table class="meta-table">
+    <tbody>
+      <tr>
+        <th>DATE</th>
+        <td>Wed, 16 Sep 2026</td>
+        <th>SLOT</th>
+        <td>Extramural hours</td>
+      </tr>
+      <tr>
+        <th>VENUE</th>
+        <td>LAB 205B - AB1</td>
+        <th>CAPACITY</th>
+        <td>50-60 Seats Only</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h1 class="title" style="margin-top: 40px; font-size: 16px;">Agenda_</h1>
+  <ul class="flags">
+    <li>
+      <span class="tag root">CTF</span>
+      <span>4–5 beginner Capture The Flag challenges, solved together.</span>
+    </li>
+    <li>
+      <span class="tag tool">TOOLS</span>
+      <span>A practical first look at Nmap, Burp Suite, and Wireshark.</span>
+    </li>
+  </ul>
+
+  <h1 class="title" style="margin-top: 50px; font-size: 16px;">Registration_</h1>
+  
+  <div class="window" style="margin-top: 15px;">
+    <div class="win-bar">
+      <span>~/cyscom/register.sh</span>
+      <span id="stageLabel">[ STEP 1/2 ]</span>
+    </div>
+    
+    <div class="win-body">
+      <!-- STAGE 1: AUTH -->
+      <div id="authStage">
+        <p class="gate-msg">
+          Authentication required. Only <code>@vitstudent.ac.in</code> domains are allowed.
+        </p>
+        <div id="gbtn-slot"></div>
+        <div class="denied" id="deniedBox">
+          FATAL: Unauthorized domain. Use your VIT student email.
+        </div>
+      </div>
+
+      <!-- STAGE 2: FORM -->
+      <div id="formStage" class="hide">
+        <div class="identity" id="identityRow">
+          <img id="idPhoto" src="" alt="">
+          <span id="idEmail"></span>
+          <span class="ok">[ VERIFIED ]</span>
+        </div>
+
+        <form id="regForm" novalidate>
+          <div class="field">
+            <label for="fName">FULL_NAME</label>
+            <input id="fName" name="name" type="text" placeholder="As printed on ID card" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="fReg">REGISTRATION_NUMBER</label>
+            <input id="fReg" name="regno" type="text" placeholder="e.g. 22BCE1234" required autocapitalize="characters" autocomplete="off">
+            <span class="err" id="errReg">Invalid format. Expected /^[0-9]{2}[A-Za-z]{2,5}[0-9]{3,5}$/</span>
+          </div>
+          <div class="field">
+            <label for="fPhone">MOBILE_NUMBER</label>
+            <input id="fPhone" name="phone" type="tel" placeholder="10 digits" required autocomplete="tel">
+            <span class="err" id="errPhone">Invalid format. Expected 10 digits.</span>
+          </div>
+
+          <div class="cmd-preview" id="cmdPreview" aria-live="polite">
+            <span class="prompt">guest@cyscom:~$</span> 
+            ./register.sh --name="<span class="pv" id="pvName"></span>" --reg="<span class="pv" id="pvReg"></span>" --phone="<span class="pv" id="pvPhone"></span>"
+          </div>
+
+          <button class="submit" type="submit" id="submitBtn">Execute Registration</button>
+        </form>
+      </div>
+
+      <!-- STAGE 3: SUCCESS -->
+      <div id="successStage" class="success">
+        <div class="success-box">
+          <div class="term-line"><span class="prompt">system@cyscom:~$</span> ping -c 1 sheet.api</div>
+          <div class="term-line ok">64 bytes from sheet.api: icmp_seq=1 ttl=54 time=14.2 ms</div>
+          <br>
+          <div class="term-line"><span class="prompt">system@cyscom:~$</span> cat status.log</div>
+          <div class="term-line ok">[200 OK] Registration committed successfully.</div>
+          <br>
+          <div class="term-line"><span class="prompt">system@cyscom:~$</span> cat flag.txt</div>
+          <div class="term-line hl">flag{see_you_wed_16_sep}</div>
+        </div>
+        <p style="color: var(--text-dim); margin-top: 20px;">
+          Session details have been logged. Check your VIT email closer to the event date.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>CySCom — Cybersecurity Club, VIT Chennai</span>
+    <span>EOF</span>
+  </footer>
+
+</div>
+
+<script>
+/* =========================================================
+   CONFIG
+========================================================= */
+const GOOGLE_CLIENT_ID = "75488771410-5u9ujnqk022ae6q5ubg9q7gebf4kn8st.apps.googleusercontent.com";
+const SHEET_ENDPOINT   = "https://script.google.com/macros/s/AKfycbzgdT-8HGL6Y7DRZZShwvUFLSEaa7TH2vqP3ZLof15WwW5xLSJ0KJAnNdtdL6fBLN6cbA/exec";
+const ALLOWED_DOMAIN   = "vitstudent.ac.in";
+/* ========================================================= */
+
+// Fast, static boot sequence - no slow typewriter
+const bootData = [
+  '<span class="prompt">guest@cyscom:~$</span> ./scan-events.sh',
+  'Initializing...',
+  '<span class="path">1 event(s) identified:</span>',
+  '  -> ID:    Workshop',
+  '  -> TOPIC: Intro to CTFs',
+  '<span class="prompt">@cyscom:~$</span> <span class="cursor"></span>'
+];
+document.getElementById('bootBody').innerHTML = bootData.map(line => `<div class="term-line">${line}</div>`).join('');
+
+// Live clock
+function tick(){
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleTimeString([], {hour12: false}) + ' IST';
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------------- Google Sign-In ---------------- */
+function parseJwt(token){
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => 
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join('')));
+}
+
+let currentUser = null;
+
+function handleCredential(response){
+  const payload = parseJwt(response.credential);
+  const email = (payload.email || '').toLowerCase();
+  const deniedBox = document.getElementById('deniedBox');
+
+  if(!email.endsWith('@' + ALLOWED_DOMAIN)){
+    deniedBox.classList.add('show');
+    return;
+  }
+  deniedBox.classList.remove('show');
+
+  currentUser = payload;
+  document.getElementById('idPhoto').src = payload.picture || '';
+  document.getElementById('idEmail').textContent = email;
+  document.getElementById('fName').value = payload.name || '';
+  updatePreview();
+
+  document.getElementById('authStage').classList.add('hide');
+  document.getElementById('formStage').classList.remove('hide');
+  document.getElementById('stageLabel').textContent = '[ STEP 2/2 ]';
+}
+
+window.onload = () => {
+  if(window.google && GOOGLE_CLIENT_ID.indexOf('YOUR_') !== 0){
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleCredential,
+      hd: ALLOWED_DOMAIN
+    });
+    // Google Button automatically scales slightly to fit containers, but width 320 limits it on tiny 320px screens. Setting to 100% behavior via nullifying fixed width.
+    google.accounts.id.renderButton(
+      document.getElementById('gbtn-slot'),
+      { theme: 'filled_black', size: 'large', shape: 'rectangular', text: 'signin_with' }
+    );
+  } else {
+    document.getElementById('gbtn-slot').innerHTML = 
+      '<div style="color:var(--red)">ERR: GOOGLE_CLIENT_ID missing in config.</div>';
+  }
+};
+
+/* ---------------- Form Logic ---------------- */
+const regForm = document.getElementById('regForm');
+const errReg = document.getElementById('errReg');
+const errPhone = document.getElementById('errPhone');
+
+function validRegNo(v) { return /^[0-9]{2}[A-Za-z]{2,5}[0-9]{3,5}$/.test(v.trim()); }
+function validPhone(v) { return /^[6-9][0-9]{9}$/.test(v.trim()); }
+
+function updatePreview(){
+  const map = [['fName', 'pvName'], ['fReg', 'pvReg'], ['fPhone', 'pvPhone']];
+  map.forEach(([inputId, pvId]) => {
+    document.getElementById(pvId).textContent = document.getElementById(inputId).value.trim();
+  });
+}
+['fName','fReg','fPhone'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+regForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const regno = document.getElementById('fReg').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+
+  let ok = true;
+  if(!validRegNo(regno)){ errReg.classList.add('show'); ok = false; } else { errReg.classList.remove('show'); }
+  if(!validPhone(phone)){ errPhone.classList.add('show'); ok = false; } else { errPhone.classList.remove('show'); }
+  if(!ok || !currentUser) return;
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'EXECUTING...';
+
+  const payload = {
+    name, regno, phone,
+    email: currentUser.email,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    if(SHEET_ENDPOINT.indexOf('YOUR_') === 0){
+      console.warn('SHEET_ENDPOINT not configured:', payload);
+    } else {
+      await fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    }
+    document.getElementById('formStage').classList.add('hide');
+    document.getElementById('successStage').classList.add('show');
+    document.getElementById('stageLabel').textContent = '[ SUCCESS ]';
+  } catch(err) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Execute Registration';
+    alert('ERR: Connection refused. Check network and try again.');
+  }
+});
+</script>
+
+</body>
+</html>
