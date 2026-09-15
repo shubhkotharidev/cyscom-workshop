@@ -148,6 +148,39 @@
     color: #fff;
   }
 
+  /* NEW SPEAKER CARD STYLES */
+  .speaker-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--green);
+    padding: 24px;
+    margin-top: 15px;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .speaker-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+  .speaker-role {
+    font-size: 13px;
+    color: var(--blue);
+    margin: 0;
+  }
+  .speaker-desc {
+    color: var(--text);
+    font-size: 14px;
+    margin: 8px 0 0 0;
+    line-height: 1.6;
+  }
+  .speaker-desc strong {
+    color: #fff;
+  }
+
   .flags {
     padding: 0;
     margin: 0;
@@ -369,11 +402,21 @@
     </div>
   </div>
 
+  <!-- UPDATED NORMAL SPEAKER SECTION -->
+  <h1 class="title" style="font-size: 16px;">Speaker_</h1>
+  <div class="speaker-card">
+    <div class="speaker-name">Om Mishra</div>
+    <div class="speaker-role">Security Content @CRAC and DefHawk</div>
+    <div class="speaker-desc">
+      He will be walking students through <strong>cybersecurity roadmaps</strong>, how to start from scratch, along with curated resources, essential tools, and the practical knowledge you actually need to break into the field.
+    </div>
+  </div>
+
   <h1 class="title" style="margin-top: 40px; font-size: 16px;">Agenda_</h1>
   <ul class="flags">
     <li>
       <span class="tag root">CTF</span>
-      <span>4–5 beginner Capture The Flag challenges, solved together.</span>
+      <span>7 beginner Capture The Flag challenges, solved together.</span>
     </li>
     <li>
       <span class="tag tool">TOOLS</span>
