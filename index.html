@@ -642,25 +642,8 @@ function handleCredential(response){
   document.getElementById('stageLabel').textContent = '[ STEP 2/2 ]';
 }
 
-window.onload = async () => {
-  // 1. Check capacity on load
-  try {
-    if(SHEET_ENDPOINT.indexOf('YOUR_') !== 0) {
-      const response = await fetch(SHEET_ENDPOINT);
-      const data = await response.json();
-      
-      if (data.capacityReached) {
-        document.getElementById('authStage').classList.add('hide');
-        document.getElementById('soldOutStage').classList.remove('hide');
-        document.getElementById('stageLabel').textContent = '[ CLOSED ]';
-        return; 
-      }
-    }
-  } catch (err) {
-    console.warn("Could not check capacity:", err);
-  }
-
-  // 2. Load Google Sign-In if seats are available
+window.onload = () => {
+  // Load Google Sign-In instantly (Capacity Check Removed)
   if(window.google && GOOGLE_CLIENT_ID.indexOf('YOUR_') !== 0){
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
