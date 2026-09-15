@@ -148,7 +148,6 @@
     color: #fff;
   }
 
-  /* NEW SPEAKER CARD STYLES */
   .speaker-card {
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -292,8 +291,83 @@
 
   #authStage.hide, #formStage.hide, #successStage.hide, #soldOutStage.hide { display: none; }
 
+  /* DYSON SPHERE ANIMATION */
+  .dyson-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 60px auto 30px auto;
+    perspective: 800px;
+  }
+  .dyson-sphere {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    /* Main wrapper slowly tumbles through space */
+    animation: core-spin 40s linear infinite;
+  }
+  .dyson-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+  
+  /* Independent rotations for thicker rings */
+  .dyson-ring.r1 {
+    border: 3px dashed var(--green);
+    animation: spin1 8s linear infinite;
+  }
+  .dyson-ring.r2 {
+    border: 3px dashed var(--blue);
+    animation: spin2 12s linear infinite;
+  }
+  .dyson-ring.r3 {
+    border: 3px solid var(--border-hl);
+    animation: spin3 10s linear infinite;
+  }
+  .dyson-ring.r4 {
+    border: 3px solid var(--border-hl);
+    animation: spin4 15s linear infinite;
+  }
+  
+  .dyson-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; /* Increased size */
+    height: 64px;
+    z-index: 10;
+    object-fit: contain;
+  }
+
+  /* Keyframes for individual rings */
+  @keyframes spin1 {
+    0% { transform: rotateX(90deg) rotateY(0deg) rotateZ(0deg); }
+    100% { transform: rotateX(90deg) rotateY(0deg) rotateZ(360deg); }
+  }
+  @keyframes spin2 {
+    0% { transform: rotateX(0deg) rotateY(90deg) rotateZ(0deg); }
+    100% { transform: rotateX(0deg) rotateY(90deg) rotateZ(-360deg); }
+  }
+  @keyframes spin3 {
+    0% { transform: rotateX(45deg) rotateY(45deg) rotateZ(0deg); }
+    100% { transform: rotateX(45deg) rotateY(45deg) rotateZ(360deg); }
+  }
+  @keyframes spin4 {
+    0% { transform: rotateX(-45deg) rotateY(-45deg) rotateZ(0deg); }
+    100% { transform: rotateX(-45deg) rotateY(-45deg) rotateZ(-360deg); }
+  }
+
+  @keyframes core-spin {
+    0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+    100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+  }
+
   footer {
-    margin-top: 60px;
+    margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
     display: flex;
@@ -306,17 +380,14 @@
     .wrap {
       padding: 20px 16px 60px;
     }
-
     header.top {
       flex-direction: column;
       align-items: flex-start;
       gap: 6px;
     }
-
     .win-body {
       padding: 16px;
     }
-
     .meta-table {
       grid-template-columns: 1fr;
     }
@@ -336,7 +407,6 @@
       padding-top: 0px;
       padding-bottom: 12px;
     }
-
     .flags li {
       flex-direction: column;
       align-items: flex-start;
@@ -345,13 +415,11 @@
     .flags .tag {
       width: auto;
     }
-
     footer {
       flex-direction: column;
       align-items: center;
       gap: 12px;
     }
-
     .identity .ok {
       margin-left: 0;
       width: 100%;
@@ -402,13 +470,12 @@
     </div>
   </div>
 
-  <!-- UPDATED NORMAL SPEAKER SECTION -->
   <h1 class="title" style="font-size: 16px;">Speaker_</h1>
   <div class="speaker-card">
     <div class="speaker-name">Om Mishra</div>
-    <div class="speaker-role">Security Content @CRAC and DefHawk</div>
+    <div class="speaker-role">Security Content @crac and DefHawk</div>
     <div class="speaker-desc">
-      He will be walking students through <strong>cybersecurity roadmaps</strong>, how to start from scratch, along with curated resources, essential tools, and the practical knowledge you actually need to break into the field.
+      Om will be walking students through <strong>cybersecurity roadmaps</strong>—how to start from scratch, along with curated resources, essential tools, and the practical knowledge you actually need to break into the field.
     </div>
   </div>
 
@@ -497,6 +564,18 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- DYSON SPHERE MODULE -->
+  <div class="dyson-container">
+    <div class="dyson-sphere">
+      <div class="dyson-ring r1"></div>
+      <div class="dyson-ring r2"></div>
+      <div class="dyson-ring r3"></div>
+      <div class="dyson-ring r4"></div>
+    </div>
+    <!-- Replace "cyscom-logo.png" with your actual transparent PNG file path -->
+    <img src="cyscom-logo.png" alt="Cyscom Logo" class="dyson-logo">
   </div>
 
   <footer>
